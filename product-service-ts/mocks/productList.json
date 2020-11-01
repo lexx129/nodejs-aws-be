@@ -1,0 +1,51 @@
+[
+  {
+    "count": 4,
+    "description": "Protein Cookie",
+    "flavor": "Coconut",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+    "price": 90
+  },
+  {
+    "count": 6,
+    "description": "Protein Cookie",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a0",
+    "price": 100,
+    "flavor": "Apple"
+  },
+  {
+    "count": 7,
+    "description": "Protein Cookie",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a10",
+    "price": 90,
+    "flavor": "Wildberry"
+  },
+  {
+    "count": 12,
+    "description": "Protein Bar",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
+    "price": 120,
+    "flavor": "almond"
+  },
+  {
+    "count": 7,
+    "description": "Protein Bar",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a22",
+    "price": 120,
+    "flavor": "banana"
+  },
+  {
+    "count": 10,
+    "description": "Protein Bar",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a222",
+    "price": 130,
+    "flavor": "chocolate"
+  },
+  {
+    "count": 7,
+    "description": "Protein Bar",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a2222",
+    "price": 150,
+    "flavor": "coconut"
+  }
+]
