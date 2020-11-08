@@ -1,18 +1,22 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import * as allProducts from '../mocks/productList.json';
+import { Client } from 'pg';
 
-export const handler: APIGatewayProxyHandler = async () => {
-  const products = (allProducts as any).default;
+import { connectionOptions } from './helpers';
+import { CORS_RESPONSE_HEADERS } from '../constants';
+
+export const handler: APIGatewayProxyHandler = async (event) => {
+  console.log('GetAllProducts request: ', event)
+  const client = new Client(connectionOptions);
+  await client.connect();
   try {
+    const productsWithStocks = await client.query(`
+      select products.*, stocks.count from products
+      join stocks on products.id = stocks.product_id
+    `);
     return {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PATCH, PUT',
-      },
+      headers: CORS_RESPONSE_HEADERS,
       statusCode: 200,
-      body: JSON.stringify(products),
+      body: JSON.stringify(productsWithStocks.rows),
     }
   } catch (e) {
     return  {
@@ -20,5 +24,7 @@ export const handler: APIGatewayProxyHandler = async () => {
       body: "Internal server error",
       stackTrace: e,
     }
+  } finally {
+    client.end();
   }
 }
