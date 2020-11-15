@@ -29,7 +29,7 @@ describe('GetProductByIdHandler', () => {
     };
 
     // @ts-ignore
-    const request: Promise<APIGatewayProxyResult> =  handler(testEvent as any, null, null);
+    const request: Promise<APIGatewayProxyResult> = handler(testEvent as any, null, null);
     request.then(data => {
       expect(data).toEqual(expected);
     })

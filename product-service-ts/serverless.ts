@@ -2,7 +2,7 @@ import type { Serverless } from 'serverless/aws';
 
 const serverlessConfiguration: Serverless = {
   service: {
-    name: 'product-service-ts',
+    name: 'product-service-ts-new',
     // app and org for use with dashboard.serverless.com
     // app: your-app-name,
     // org: your-org-name,
@@ -30,7 +30,7 @@ const serverlessConfiguration: Serverless = {
   },
   functions: {
     getAllProducts: {
-      handler: 'handlers/getProductsList.handler',
+      handler: 'handlers/product-service/getProductsList.handler',
       events: [
         {
           http: {
@@ -42,7 +42,7 @@ const serverlessConfiguration: Serverless = {
       ]
     },
     getProductById: {
-      handler: 'handlers/getProductById.handler',
+      handler: 'handlers/product-service/getProductById.handler',
       events: [
         {
           http: {
@@ -54,7 +54,7 @@ const serverlessConfiguration: Serverless = {
       ]
     },
     createProduct: {
-      handler: 'handlers/createProduct.handler',
+      handler: 'handlers/product-service/createProduct.handler',
       events: [
         {
           http: {
@@ -66,12 +66,42 @@ const serverlessConfiguration: Serverless = {
       ]
     },
     initDb: {
-      handler: 'handlers/pgClient.init',
+      handler: 'handlers/product-service/pgClient.init',
       events: [
         {
           http: {
             method: 'get',
             path: 'dbProducts',
+          }
+        }
+      ]
+    },
+    importProductsFile1: {
+      handler: 'handlers/import-service/importProductsFile.handler',
+      events: [
+        {
+          http: {
+            method: 'get',
+            path: 'import',
+            cors: true
+          }
+        }
+      ]
+    },
+    importFileParser2: {
+      handler: 'handlers/import-service/importFileParser.handler',
+      events: [
+        {
+          s3: {
+            bucket: 'gavr-products-import',
+            event: 's3:ObjectCreated:*',
+            existing: true,
+            rules: [
+              {
+                prefix: 'uploaded/',
+                suffix: '.csv',
+              },
+            ]
           }
         }
       ]
