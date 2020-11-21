@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 
-import { CORS_RESPONSE_HEADERS } from '../../constants';
+import { CORS_RESPONSE_HEADERS } from '../../shared/constants';
 import { BUCKET, INBOUND_DIR } from './constants';
 
 export const handler: APIGatewayProxyHandler = async (event) => {

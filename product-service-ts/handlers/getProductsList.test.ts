@@ -1,4 +1,4 @@
-import * as products from '../../mocks/productList.json';
+import * as products from '../mocks/productList.json';
 import { handler } from './getProductsList';
 
 describe('GetProductsListHandler', () => {

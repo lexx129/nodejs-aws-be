@@ -2,7 +2,7 @@ import type { Serverless } from 'serverless/aws';
 
 const serverlessConfiguration: Serverless = {
   service: {
-    name: 'product-service-ts-new',
+    name: 'import-service-ts',
     // app and org for use with dashboard.serverless.com
     // app: your-app-name,
     // org: your-org-name,
@@ -29,49 +29,32 @@ const serverlessConfiguration: Serverless = {
     },
   },
   functions: {
-    getAllProducts: {
-      handler: 'handlers/getProductsList.handler',
+    importProductsFile1: {
+      handler: 'handlers/importProductsFile.handler',
       events: [
         {
           http: {
             method: 'get',
-            path: 'products',
-            cors: true,
+            path: 'import',
+            cors: true
           }
         }
       ]
     },
-    getProductById: {
-      handler: 'handlers/getProductById.handler',
+    importFileParser2: {
+      handler: 'handlers/importFileParser.handler',
       events: [
         {
-          http: {
-            method: 'get',
-            path: 'products/{id}',
-            cors: true,
-          }
-        }
-      ]
-    },
-    createProduct: {
-      handler: 'handlers/createProduct.handler',
-      events: [
-        {
-          http: {
-            method: 'put',
-            path: 'products',
-            cors: true,
-          }
-        }
-      ]
-    },
-    initDb: {
-      handler: 'handlers/pgClient.init',
-      events: [
-        {
-          http: {
-            method: 'get',
-            path: 'dbProducts',
+          s3: {
+            bucket: 'gavr-products-import',
+            event: 's3:ObjectCreated:*',
+            existing: true,
+            rules: [
+              {
+                prefix: 'uploaded/',
+                suffix: '.csv',
+              },
+            ]
           }
         }
       ]
