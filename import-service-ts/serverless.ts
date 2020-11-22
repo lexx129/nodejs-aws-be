@@ -26,10 +26,65 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: {
+        Ref: 'SQSQueue'
+      },
+      SNS_ARN: {
+        Ref: 'SNSTopic',
+      }
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: {
+          "Fn::GetAtt": ['SQSQueue', 'Arn']
+        },
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sns:*',
+        Resource: {
+          Ref: 'SNSTopic',
+        }
+      }
+    ]
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'gavr-parsed-products-sqs-queue'
+        }
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'gavr-created-products-sns-topic'
+        }
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'aleks02.94@mail.ru',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          }
+        }
+      }
+    },
+    Outputs: {
+      SQSQueueUrl: {
+        Value: {
+          Ref: 'SQSQueue'
+        }
+      }
+    }
   },
   functions: {
-    importProductsFile1: {
+    importProductsFile: {
       handler: 'handlers/importProductsFile.handler',
       events: [
         {
@@ -41,7 +96,7 @@ const serverlessConfiguration: Serverless = {
         }
       ]
     },
-    importFileParser2: {
+    importFileParser: {
       handler: 'handlers/importFileParser.handler',
       events: [
         {
@@ -59,6 +114,19 @@ const serverlessConfiguration: Serverless = {
         }
       ]
     },
+    catalogBatchProcess: {
+      handler: 'handlers/catalogBatchProcess.handler',
+      events: [
+        {
+          sqs: {
+            batchSize: 5,
+            arn: {
+              "Fn::GetAtt": ['SQSQueue', 'Arn']
+            }
+          }
+        }
+      ]
+    }
   }
 }
 
