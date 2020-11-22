@@ -2,7 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { Client } from 'pg';
 
 import { connectionOptions } from './helpers';
-import { CORS_RESPONSE_HEADERS } from '../constants';
+import { CORS_RESPONSE_HEADERS } from '../../shared/constants';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   console.log('CreateProduct request: ', event);
@@ -19,29 +19,28 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       }
     }
 
-    const createProductResult = await client.query(`
-      insert into products (description, flavor, price) values
-        ('${description}', '${flavor}', ${price})
-      returning id
-    `);
+    const createProductResult = await client.query(
+      'insert into products (description, flavor, price) values ($1, $2, $3) returning id',
+      [description, flavor, price]
+    );
 
     const createdId = createProductResult.rows[0].id;
-    await client.query(`
-      insert into stocks (product_id, count) values
-        ('${createdId}', ${count})
-    `);
+    await client.query(
+      'insert into stocks (product_id, count) values ($1, $2)',
+      [createdId, count]
+    );
 
     return {
       headers: CORS_RESPONSE_HEADERS,
-      statusCode: 200,
+      statusCode: 201,
       body: `Created product with id=${ createdId }`,
     }
   } catch (e) {
+    console.log('Error happened while creating a product', e);
     return {
       headers: CORS_RESPONSE_HEADERS,
       statusCode: 500,
       body: "Internal server error",
-      stackTrace: e,
     }
   } finally {
     client.end();

@@ -2,7 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { Client } from 'pg';
 
 import { connectionOptions } from './helpers';
-import { CORS_RESPONSE_HEADERS } from '../constants';
+import { CORS_RESPONSE_HEADERS } from '../../shared/constants';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   console.log('GetAllProducts request: ', event)
