@@ -18,9 +18,10 @@ export const handler = async (event) => {
       return await addProductToDB(client, product);
     });
     const results = await Promise.all(promises);
-    const sns = new SNS({ region: 'eu-west-1' });
+
     for (const result of results) {
-      sns.publish({
+      const sns = new SNS({ region: 'eu-west-1' });
+      await sns.publish({
         Subject: 'Product creation notification',
         Message: `Product with id = '${result}' was created`,
         TopicArn: process.env.SNS_ARN,
@@ -30,7 +31,7 @@ export const handler = async (event) => {
         } else {
           console.log('sent notification for product', data);
         }
-      });
+      }).promise();
       console.log('Created product with id: ', result);
     }
   } catch (error) {

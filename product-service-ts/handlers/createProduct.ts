@@ -29,18 +29,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         }
       })
 
-    // const createProductResult = await client.query(
-    //   'insert into products (description, flavor, price) values ($1, $2, $3) returning id',
-    //   [description, flavor, price]
-    // );
-    //
-    // const createdId = createProductResult.rows[0].id;
-    // await client.query(
-    //   'insert into stocks (product_id, count) values ($1, $2)',
-    //   [createdId, count]
-    // );
-
-
   } catch (e) {
     console.log('Error happened while creating a product', e);
     return {

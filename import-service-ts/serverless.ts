@@ -73,6 +73,19 @@ const serverlessConfiguration: Serverless = {
             Ref: 'SNSTopic'
           }
         }
+      },
+      SNSSubscriptionBananaFlavor: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'aleks02.94@mail.ru',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          },
+          FilterPolicy: JSON.stringify({
+            flavor: [{Type: 'String', Value: 'Banana'}]
+          })
+        }
       }
     },
     Outputs: {
