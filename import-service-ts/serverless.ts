@@ -12,6 +12,9 @@ const serverlessConfiguration: Serverless = {
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true
+    },
+    authorizerArn: {
+      "Fn::ImportValue": "AuthorizerARN",
     }
   },
   // Add the serverless-webpack plugin
@@ -74,17 +77,43 @@ const serverlessConfiguration: Serverless = {
           }
         }
       },
-      SNSSubscriptionBananaFlavor: {
-        Type: 'AWS::SNS::Subscription',
+      GatewayResponseDefault400: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
         Properties: {
-          Endpoint: 'aleks02.94@mail.ru',
-          Protocol: 'email',
-          TopicArn: {
-            Ref: 'SNSTopic'
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
           },
-          FilterPolicy: JSON.stringify({
-            flavor: [{Type: 'String', Value: 'Banana'}]
-          })
+          ResponseType: 'DEFAULT_4XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          }
+        }
+      },
+      GatewayResponseAccessDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'ACCESS_DENIED',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          }
+        }
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'UNAUTHORIZED',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          }
         }
       }
     },
@@ -104,10 +133,16 @@ const serverlessConfiguration: Serverless = {
           http: {
             method: 'get',
             path: 'import',
-            cors: true
+            cors: true,
+            authorizer: {
+              name: 'tokenAuthorizer',
+              arn: '${self:custom.authorizerArn}',
+              identitySource: 'method.request.header.Authorization',
+              type: 'token',
+            }
           }
-        }
-      ]
+        },
+      ],
     },
     importFileParser: {
       handler: 'handlers/importFileParser.handler',
